@@ -4,18 +4,30 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchBar from "./search-bar";
 
+// Define types for questions and answers
+interface Answer {
+  id: string;
+  content: string;
+}
+
+interface Question {
+  id: string;
+  question: string;
+  answers: Answer[];
+}
+
 // Add fuzzy match helper function
 const fuzzyMatch = (text: string, search: string) => {
   return text.toLowerCase().includes(search.toLowerCase());
 };
 
-export default function FAQSection({ questions }: { questions: any[] }) {
+export default function FAQSection({ questions }: { questions: Question[] }) {
   const [openQuestion, setOpenQuestion] = useState<number | null>(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredQuestions = questions.filter((question) => {
     const matchesQuestion = fuzzyMatch(question.question, searchQuery);
-    const matchesAnswer = question.answers.some((answer: any) =>
+    const matchesAnswer = question.answers.some((answer: Answer) =>
       fuzzyMatch(answer.content, searchQuery)
     );
     return matchesQuestion || matchesAnswer;
@@ -56,7 +68,7 @@ export default function FAQSection({ questions }: { questions: any[] }) {
                 exit={{ height: 0, opacity: 0 }}
                 className="px-6 pb-6 space-y-4"
               >
-                {question.answers.map((answer: any) => (
+                {question.answers.map((answer: Answer) => (
                   <motion.div
                     key={answer.id}
                     initial={{ x: -20 }}
@@ -80,7 +92,7 @@ export default function FAQSection({ questions }: { questions: any[] }) {
           animate={{ opacity: 1 }}
           className="text-center py-12 text-gray-500 dark:text-gray-400"
         >
-          No results found for "{searchQuery}"
+          No results found for &quot;{searchQuery}&quot;
         </motion.div>
       )}
     </div>
